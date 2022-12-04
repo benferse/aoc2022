@@ -15,8 +15,7 @@
 /// ```
 pub fn sort_inventories(inventory: &[u32]) -> Vec<u32> {
     // Split the full inventory list into each elf's
-    // individual inventory, sum them up, and reduce the
-    // list to the highest total
+    // individual inventory and sum them up
     let mut inventory_totals: Vec<u32> = inventory
         .split(|&item| item == 0)
         .map(|snacks| snacks.iter().sum())
