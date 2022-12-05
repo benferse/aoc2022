@@ -11,7 +11,7 @@ use std::collections::HashSet;
 /// use aoc2022::day3::*;
 /// use std::collections::HashSet;
 /// 
-/// let (left, right) = partition_contents("ttgJtRGJQctTZtZT");
+/// let (left, right) = partition_compartments("ttgJtRGJQctTZtZT");
 /// 
 /// assert_eq!(left, HashSet::from(['t', 'g', 'J', 'R', 'G']));
 /// assert_eq!(right, HashSet::from(['Q', 'c', 't', 'T', 'Z']));
