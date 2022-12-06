@@ -3,17 +3,12 @@
 use std::collections::VecDeque;
 use std::str::FromStr;
 
+#[derive(Default)]
 pub struct Inventory {
     pub stacks: Vec<VecDeque<char>>,
 }
 
 impl Inventory {
-    pub fn new() -> Self {
-        Self {
-            stacks: vec![],
-        }
-    }
-
     pub fn reserve(&mut self, count: usize) {
         self.stacks = vec![VecDeque::new(); count];
     }
@@ -97,11 +92,11 @@ impl FromStr for Direction {
 /// assert_eq!(inventory.stacks, vec![vec!['Z', 'N'], vec!['M', 'C', 'D'], vec!['P']]);
 /// ```
 pub fn parse_input(input: &str) -> (Inventory, Vec<Direction>) {
-    let mut lines = input.lines();
-    let mut stacks = Inventory::new();
+    let lines = input.lines();
+    let mut stacks = Inventory::default();
     let mut directions = vec![];
 
-    while let Some(line) = lines.next() {
+    for line in lines {
         match line {
             crates if crates.trim_start().starts_with('[') => {
                 stacks.add_inventory(crates);

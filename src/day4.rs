@@ -5,7 +5,7 @@ use std::ops::RangeInclusive;
 
 type Assignment = RangeInclusive<u8>;
 
-#[derive(Copy, Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq,)]
 pub enum OverlapType {
     /// Complete, one range complete contains another
     Full,
