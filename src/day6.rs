@@ -7,7 +7,7 @@ trait FunOverEngineering {
     fn count_distinct(&self) -> usize;
 }
 
-impl<'a, T> FunOverEngineering for &'a &[T] where T: Hash + Eq {
+impl<T> FunOverEngineering for &&[T] where T: Hash + Eq {
     fn count_distinct(&self) -> usize {
         HashSet::<_>::from_iter(**self).len()
     }
