@@ -53,25 +53,25 @@ mod answers {
             .map(str::trim)
             .collect::<Vec<_>>();
 
-        let fs = build_filesystem(&input);
+        let mut dir_sizes = build_filesystem(&input)
+            .values()
+            .copied()
+            .collect::<Vec<_>>();
+        dir_sizes.sort_unstable();
 
         // Part the first
-        let hits: usize = fs
-            .values()
-            .filter(|&&v| v <= 100000)
+        let little_guys: usize = dir_sizes
+            .iter()
+            .take_while(|&&v| v <= 100000)
             .sum();
-        assert_eq!(hits, 1644735);
+        assert_eq!(little_guys, 1644735);
 
         // Part the second
-        let total_free = 70000000 - *fs.get(Path::new("/")).unwrap_or(&0);
-        let extra_required = 30000000 - total_free;
+        let extra_required = dir_sizes.last().unwrap_or(&0) - 40000000;
+        let smallest = dir_sizes
+            .iter()
+            .find(|&&v| v >= extra_required);
 
-        let mut candidates = fs
-            .values()
-            .filter(|&&v| v >= extra_required)
-            .collect::<Vec<_>>();
-            
-        candidates.sort_unstable();
-        assert_eq!(candidates[0], &1300850);
+        assert_eq!(smallest, Some(&1300850));
     }
 }
