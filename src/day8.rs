@@ -133,9 +133,9 @@ pub fn best_scenic_score(heightmap: &Grid<Node>) -> usize {
                 let (up, down) = this_col.split_at(row);
 
                 // Mixing indexes and offsets is always a blast -_-
-                let right_score = right.iter().skip(1).position(|&x| x >= this_node).map_or(right.len() - 1, |p| p + 1);
+                let right_score = right[1..].iter().position(|&x| x >= this_node).map_or(right.len() - 1, |p| p + 1);
                 let left_score = left.iter().rposition(|&x| x >= this_node).map_or(left.len(), |p| left.len() - p);
-                let down_score = down.iter().skip(1).position(|&x| x >= this_node).map_or(down.len() - 1, |p| p + 1);
+                let down_score = down[1..].iter().position(|&x| x >= this_node).map_or(down.len() - 1, |p| p + 1);
                 let up_score = up.iter().rposition(|&x| x >= this_node).map_or(up.len(), |p| up.len() - p);
 
                 // No, I don't care about overflow
