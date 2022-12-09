@@ -43,7 +43,6 @@ pub fn build_filesystem(terminal_output: &[&str]) -> HashMap<PathBuf, usize> {
 
 #[cfg(test)]
 mod answers {
-    use std::path::Path;
     use super::*;
 
     #[test]
