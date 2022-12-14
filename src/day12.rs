@@ -64,11 +64,36 @@ mod answers {
     use super::*;
     use test_case::test_case;
 
-    #[test_case(SAMPLE_GRID => 31; "problem 1 with example data")]
-    #[test_case(personal_grid().as_slice() => 534; "problem 1 with personal data")]
-    fn run_test(input: &[&str]) -> u32 {
-        let (mut grid, start, end) = load_grid(input);
-        do_bfs(&mut grid, start, end)
+    #[test_case(SAMPLE_GRID => 31; "with example data")]
+    #[test_case(personal_grid().as_slice() => 534; "with personal data")]
+    fn problem1(input: &[&str]) -> u32 {
+        let (grid, start, end) = load_grid(input);
+        do_bfs(&grid, start, end)
+    }
+
+    #[test_case(SAMPLE_GRID => 29; "with example data")]
+    #[test_case(personal_grid().as_slice() => 525; "with personal data")]
+    fn problem2(input: &[&str]) -> u32 {
+        let (grid, _, end) = load_grid(input);
+        let mut shortest = u32::MAX;
+        let mut candidates = vec![];
+
+        for (i, line) in grid.iter().enumerate() {
+            for (j, k) in line.iter().enumerate() {
+                if *k == 'a' as u8 {
+                    candidates.push((j as isize, i as isize));
+                }
+            }
+        }
+
+        for candidate in candidates {
+            let q = do_bfs(&grid, candidate, end);
+            if q > 0 {
+                shortest = shortest.min(q);
+            }
+        }
+
+        shortest
     }
 
     const SAMPLE_GRID: &[&str] = &[
