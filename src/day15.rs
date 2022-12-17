@@ -28,11 +28,6 @@ pub fn line_to_points(line: &str) -> (Point, Point) {
 pub fn count_covered_cells(map: &SensorMap, target_row: i32) -> Vec<Range> {
     let mut ranges = vec![];
 
-    // For each sensor/beacon pair:
-    // - Figure out the distance between the sensor and the beacon D
-    // - Figure out if sensor is within D rows of the target row
-    // - If it is, figure out the cells that this sensor
-    //   covers on the target row
     for (sensor, beacon) in map {
         let beacon_distance = (sensor.0 - beacon.0).abs() + (sensor.1 - beacon.1).abs();
         let to_target_row = (sensor.1 - target_row).abs();
@@ -42,9 +37,6 @@ pub fn count_covered_cells(map: &SensorMap, target_row: i32) -> Vec<Range> {
         }
     }
  
-    // When all is said and done, the extents cover the range of 
-    // cells that are covered by the sensors in the target row, and therefore
-    // cannot contain beacons
     ranges
 }
 
