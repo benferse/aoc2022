@@ -1,7 +1,5 @@
 //! Day 17 - Pyroclastic flow
 
-use std::collections::HashMap;
-use std::collections::hash_map::Entry;
 use std::fmt::Display;
 
 #[derive(Copy, Clone)]
@@ -118,6 +116,8 @@ pub fn drop_rock(pile: &mut Vec<u8>, wind: &[u8], windex: &mut usize, rock_index
 #[cfg(test)]
 mod answers {
     use super::*;
+
+    use std::collections::{HashMap, hash_map::Entry};
     use test_case::test_case;
 
     #[test_case(SAMPLE_INPUT, 2022 => 3068; "with example data")]
