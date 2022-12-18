@@ -1,5 +1,7 @@
 //! Day 17 - Pyroclastic flow
 
+use std::collections::HashMap;
+use std::collections::hash_map::Entry;
 use std::fmt::Display;
 
 #[derive(Copy, Clone)]
@@ -120,18 +122,49 @@ mod answers {
 
     #[test_case(SAMPLE_INPUT, 2022 => 3068; "with example data")]
     #[test_case(PERSONAL_INPUT, 2022 => 3102; "with real data")]
+    #[test_case(SAMPLE_INPUT, 1_000_000_000_000 => 1514285714288; "with huge example data")]
+    #[test_case(PERSONAL_INPUT, 1_000_000_000_000 => 1539823008825; "with huge real data")]
     pub fn problem1(wind_gusts: &str, num_rocks: usize) -> usize {
         let wind = wind_gusts.as_bytes();
-        let mut windex = 0;
-        let mut pile: Vec<u8> = vec![]; 
+        let mut wind_index = 0;
+        let mut pile: Vec<u8> = Vec::with_capacity(wind.len() * ROCKS.len()); 
         let mut n = 0;
+        let mut cache = HashMap::with_capacity(2048);
+        let mut forecasted_height = 0;
 
         while n < num_rocks {
-            drop_rock(&mut pile, &wind, &mut windex, n % 5);
+            let rock_index = n % 5;
+            drop_rock(&mut pile, &wind, &mut wind_index, rock_index);
             n += 1;
+
+            // Use the top 8 layers to look for cycles (the "summit" of the pile)
+            if pile.len() < 8 {
+                continue;
+            }
+
+            let summit = u64::from_ne_bytes(pile[pile.len() - 8..].try_into().unwrap());
+            let cache_key = (summit, rock_index, wind_index);
+
+            match cache.entry(cache_key) {
+                Entry::Occupied(e) => {
+                    // This heuristic is here to deal with the fact that we most likely
+                    // start in the "middle" of a cycle. It's silly but it works /shrug.
+                    if n > wind.len() {
+                        let (previous_n, previous_pile_height) = e.get();
+                        let count_repeated_rocks = n - previous_n;
+                        let count_cycles = (num_rocks - n) / count_repeated_rocks;
+                        n += count_repeated_rocks * count_cycles;
+                        forecasted_height += count_cycles * (pile.len() - previous_pile_height);
+                    }
+                    cache.clear();
+                },
+                Entry::Vacant(e) => {
+                    e.insert((n, pile.len()));
+                }
+            }
         }
 
-        pile.len()
+        pile.len() + forecasted_height
     }
 
 
