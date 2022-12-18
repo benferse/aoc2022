@@ -33,7 +33,7 @@ impl Cpu {
 pub fn exec(source_code: &[&str]) -> Vec<i32> {
     // Compile the source
     let mut compiled = source_code
-        .into_iter()
+        .iter()
         .map(|&x| Opcode::parse(x))
         .fuse();
 
@@ -75,7 +75,7 @@ pub fn exec(source_code: &[&str]) -> Vec<i32> {
             let idx = row * 40 + col;
             print!("{}", crt[idx]);
         }
-        println!("");
+        println!();
     }
 
     signal_strengths

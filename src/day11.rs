@@ -144,7 +144,7 @@ pub fn simulate_round(monkeys: &mut Vec<Monkey>, relief: u64) {
     }
 }
 
-pub fn calculate_monkey_business(monkeys: &Vec<Monkey>) -> usize {
+pub fn calculate_monkey_business(monkeys: &[Monkey]) -> usize {
     let mut activity_levels = monkeys
         .iter()
         .map(|monkey| monkey.inspected)

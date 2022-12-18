@@ -26,7 +26,7 @@ pub fn compare(lhs: &Value, rhs: &Value) -> Ordering {
                 }
             }
 
-            return a.len().cmp(&b.len());
+            a.len().cmp(&b.len())
         },
 
         (Value::Number(a), Value::Array(_)) => {

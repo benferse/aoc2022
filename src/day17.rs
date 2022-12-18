@@ -43,7 +43,7 @@ impl Display for Rock {
             for offset in 1..=7 {
                 write!(f, "{}", if byte >> (7 - offset) & 0x1 == 1 {'#'} else {'.'})?;
             }
-            write!(f, "|\n")?;
+            writeln!(f, "|")?;
         }
 
         Ok(())
@@ -78,8 +78,8 @@ pub fn drop_rock(pile: &mut Vec<u8>, wind: &[u8], windex: &mut usize, rock_index
         *windex = (*windex + 1) % wind.len();
 
         match next_jet {
-            c if c == '<' as u8 => rock.blow_left(wind_horizon),
-            c if c == '>' as u8 => rock.blow_right(wind_horizon),
+            b'<' => rock.blow_left(wind_horizon),
+            b'>' => rock.blow_right(wind_horizon),
             _ => (),
         }
 

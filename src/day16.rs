@@ -81,7 +81,7 @@ impl Caves {
         caves
     }
 
-    pub fn solve(&mut self, start_from: &str, open_valve_mask: u32, time_left: i32, accumulated_flow: i32, mut solution: &mut HashMap<u32, i32>) {
+    pub fn solve(&mut self, start_from: &str, open_valve_mask: u32, time_left: i32, accumulated_flow: i32, solution: &mut HashMap<u32, i32>) {
         // Update the best flow for the valves used so far
         let current_best = solution.get(&open_valve_mask).unwrap_or(&0);
         solution.insert(open_valve_mask, *current_best.max(&accumulated_flow));
@@ -96,7 +96,7 @@ impl Caves {
                 continue;
             }
 
-            self.solve(node, open_valve_mask | node_mask, new_deadline, accumulated_flow + new_deadline * flow, &mut solution);
+            self.solve(node, open_valve_mask | node_mask, new_deadline, accumulated_flow + new_deadline * flow, solution);
         }
     }
 }

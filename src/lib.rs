@@ -6,6 +6,8 @@
 #![feature(once_cell)]
 #![feature(anonymous_lifetime_in_impl_trait)]
 
+#![allow(clippy::unusual_byte_groupings)]
+
 pub mod day1;
 pub mod day2;
 pub mod day3;

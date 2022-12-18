@@ -2,7 +2,10 @@
 
 use std::collections::{HashSet, VecDeque};
 
-pub fn load_grid(lines: &[&str]) -> (Vec<Vec<u8>>, (isize, isize), (isize, isize)) {
+pub type HeightMap = Vec<Vec<u8>>;
+pub type Coordinate = (isize, isize);
+
+pub fn load_grid(lines: &[&str]) -> (HeightMap, Coordinate, Coordinate) {
     let mut grid = vec![];
     let mut start = (0, 0);
     let mut end = (0, 0);
@@ -20,8 +23,8 @@ pub fn load_grid(lines: &[&str]) -> (Vec<Vec<u8>>, (isize, isize), (isize, isize
             })
             .map(|(_, c)| {
                 match c {
-                    'S' => 'a' as u8,
-                    'E' => 'z' as u8,
+                    'S' => b'a',
+                    'E' => b'z',
                     c => c as u8,
                 }
             })
