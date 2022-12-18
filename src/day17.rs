@@ -62,7 +62,7 @@ pub fn get_horizon(pile: &Vec<u8>, elevation: usize) -> u32 {
     }
 }
 
-pub fn drop_rock(pile: &mut Vec<u8>, wind: &mut impl Iterator<Item=char>, mut rock: Rock) -> usize {
+pub fn drop_rock(pile: &mut Vec<u8>, wind: &[u8], windex: &mut usize, mut rock: Rock) -> usize {
     // `pile` represents the mass of rocks that has come to rest.
     // The new rock will be generated three layers above the top of the pile
     let mut altitude = pile.len() + 3;
@@ -73,9 +73,12 @@ pub fn drop_rock(pile: &mut Vec<u8>, wind: &mut impl Iterator<Item=char>, mut ro
     loop {
         let wind_horizon = get_horizon(pile, altitude);
 
-        match wind.next() {
-            Some('<') => rock.blow_left(wind_horizon),
-            Some('>') => rock.blow_right(wind_horizon),
+        let next_jet = wind[*windex];
+        *windex = (*windex + 1) % wind.len();
+
+        match next_jet {
+            c if c == '<' as u8 => rock.blow_left(wind_horizon),
+            c if c == '>' as u8 => rock.blow_right(wind_horizon),
             _ => (),
         }
 
@@ -123,14 +126,15 @@ mod answers {
     #[test_case(SAMPLE_INPUT, 2022 => 3068; "with example data")]
     #[test_case(PERSONAL_INPUT, 2022 => 3102; "with real data")]
     pub fn problem1(wind_gusts: &str, num_rocks: usize) -> usize {
-        let mut wind = wind_gusts.chars().cycle();
+        let wind = wind_gusts.as_bytes();
+        let mut windex = 0;
         let mut pile: Vec<u8> = vec![]; 
         let mut total_height = 0;
 
         let mut n = 0;
         while n < num_rocks {
             let rock = ROCKS[n % 5];
-            let floor = drop_rock(&mut pile, &mut wind, rock);
+            let floor = drop_rock(&mut pile, &wind, &mut windex, rock);
 
             if floor != 0 {
                 let new_pile = pile.split_off(floor);
