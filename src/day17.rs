@@ -62,10 +62,11 @@ pub fn get_horizon(pile: &Vec<u8>, elevation: usize) -> u32 {
     }
 }
 
-pub fn drop_rock(pile: &mut Vec<u8>, wind: &[u8], windex: &mut usize, mut rock: Rock) -> usize {
+pub fn drop_rock(pile: &mut Vec<u8>, wind: &[u8], windex: &mut usize, rock_index: usize) {
     // `pile` represents the mass of rocks that has come to rest.
     // The new rock will be generated three layers above the top of the pile
     let mut altitude = pile.len() + 3;
+    let mut rock = ROCKS[rock_index];
 
     // Until the rock comes to rest, let the wind blow it around and then
     // try to drop it down a layer. Blocks always start above the top of the pile,
@@ -88,7 +89,6 @@ pub fn drop_rock(pile: &mut Vec<u8>, wind: &[u8], windex: &mut usize, mut rock: 
         } else if altitude == 0 || rock.0 & get_horizon(pile, altitude - 1) != 0 {
             // The rock has come to rest, either because it hit the bottom or the pile
             // is now propping it up. Introduce the bytes of the rock into the pile
-            let mut new_floor = 0;
             let rock_bytes = rock.0
                 .to_le_bytes()
                 .into_iter()
@@ -97,11 +97,6 @@ pub fn drop_rock(pile: &mut Vec<u8>, wind: &[u8], windex: &mut usize, mut rock: 
             for rock_byte in rock_bytes {
                 if altitude < pile.len() {
                     pile[altitude] |= rock_byte;
-
-                    // This may have created a new floor.
-                    if pile[altitude] == 0b01111111 {
-                        new_floor = altitude;
-                    }
                 } else {
                     pile.push(rock_byte);
                 }
@@ -110,7 +105,7 @@ pub fn drop_rock(pile: &mut Vec<u8>, wind: &[u8], windex: &mut usize, mut rock: 
             }
 
             // Next rock please
-            return new_floor;
+            break;
         } else {
             // At or below the pile, but we didn't collide with the horizon, so drop
             altitude -= 1;
@@ -129,22 +124,14 @@ mod answers {
         let wind = wind_gusts.as_bytes();
         let mut windex = 0;
         let mut pile: Vec<u8> = vec![]; 
-        let mut total_height = 0;
-
         let mut n = 0;
-        while n < num_rocks {
-            let rock = ROCKS[n % 5];
-            let floor = drop_rock(&mut pile, &wind, &mut windex, rock);
 
-            if floor != 0 {
-                let new_pile = pile.split_off(floor);
-                total_height += floor;
-                pile = new_pile;
-            }
+        while n < num_rocks {
+            drop_rock(&mut pile, &wind, &mut windex, n % 5);
             n += 1;
         }
 
-        total_height + pile.len()
+        pile.len()
     }
 
 
