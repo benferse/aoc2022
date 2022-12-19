@@ -1,6 +1,6 @@
 //! Boiling boulders
 
-use std::collections::{BTreeSet, VecDeque};
+use std::collections::BTreeSet;
 
 pub type Point = (i32, i32, i32);
 pub type Extents = (i32, i32);
