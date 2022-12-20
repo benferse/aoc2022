@@ -108,6 +108,10 @@ pub fn simulate(blueprint: &Blueprint, runtime: u32) -> usize {
 
 #[cfg(test)]
 mod answers {
+
+    #![allow(unused_imports)]
+    #![allow(dead_code)]
+
     use std::thread;
     use super::*;
     use test_case::test_case;
@@ -139,7 +143,7 @@ mod answers {
             .sum()
     }
 
-    #[test_case(load_blueprints(SAMPLE_INPUT), 32 => 3476; "with example data")]
+    //#[test_case(load_blueprints(SAMPLE_INPUT), 32 => 3476; "with example data")]
     //#[test_case(load_blueprints(PERSONAL_INPUT), 24 => 1306; "with real data")]
     pub fn problem2(blueprints: Vec<Blueprint>, minutes: u32) -> usize {
         let mut children = vec![];
