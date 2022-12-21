@@ -5,6 +5,7 @@
 #![feature(iter_next_chunk)]
 #![feature(once_cell)]
 #![feature(anonymous_lifetime_in_impl_trait)]
+#![feature(hash_drain_filter)]
 
 #![allow(clippy::unusual_byte_groupings)]
 
@@ -30,3 +31,4 @@ pub mod day17;
 pub mod day18;
 pub mod day19;
 pub mod day20;
+pub mod day21;
