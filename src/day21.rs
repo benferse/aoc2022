@@ -2,42 +2,113 @@
 
 use std::collections::HashMap;
 
-#[derive(Debug)]
-pub struct Equation<'a> {
-    lhs: &'a str,
-    rhs: &'a str,
-    op: u8,
+pub fn execute(op: u8, lhs: i64, rhs: i64) -> i64 {
+    match op {
+        b'+' => lhs + rhs,
+        b'-' => lhs - rhs,
+        b'*' => lhs * rhs,
+        b'/' => lhs / rhs,
+        x => panic!("Unknown operator {x}"),
+    }
 }
 
-pub type ShoutingMonkeys<'a> = HashMap<&'a str, i64>;
-pub type ThinkingMonkeys<'a> = HashMap<&'a str, Equation<'a>>;
+#[derive(Debug)]
+pub enum Node {
+    Number(i64),
+    Math(u8, Box<Node>, Box<Node>),
+    Human(i64),
+}
 
-pub fn parse_input<'a>(input: &[&'a str]) -> (ShoutingMonkeys<'a>, ThinkingMonkeys<'a>) {
-    let mut shouting_monkeys = HashMap::with_capacity(input.len());
-    let mut thinking_monkeys = HashMap::with_capacity(input.len());
-
-    for line in input {
-        let tokens: Vec<_> = line.split_whitespace().collect();
-        let name = &tokens[0][0..tokens[0].len() - 1];
-        match tokens.len() {
-            2 => {
-                let number = tokens[1].parse().unwrap();
-                shouting_monkeys.insert(name, number);
-            },
-
-            4 => {
-                let eq = Equation {
-                    lhs: tokens[1],
-                    rhs: tokens[3],
-                    op: tokens[2].as_bytes()[0],
-                };
-                thinking_monkeys.insert(name, eq);
-            },
-            x => panic!("What kind of monkey is this with {x} tokens?"),
+impl Node {
+    pub fn eval(&self) -> i64 {
+        // In eval mode, "humn" is just another number shoutin' monkey
+        match self {
+            Node::Number(x) | Node::Human(x) => *x,
+            Node::Math(op, lhs, rhs) => execute(*op, lhs.eval(), rhs.eval()),
         }
     }
 
-    (shouting_monkeys, thinking_monkeys)
+    pub fn reduce(&self) -> Self {
+        match self {
+            Node::Number(x) => Node::Number(*x),
+            Node::Human(x) => Node::Human(*x),
+            Node::Math(op, lhs, rhs) => {
+                let lhs = lhs.reduce();
+                let rhs = rhs.reduce();
+                match (&lhs, &rhs) {
+                    (Node::Number(x), Node::Number(y)) => {
+                        Node::Number(execute(*op, *x, *y))
+                    },
+                    _ => Node::Math(*op, Box::new(lhs), Box::new(rhs)),
+                }
+            }
+        }
+    }
+
+    pub fn backtrack_from(&self, value: i64) -> i64 {
+        match self {
+            Node::Human(_) => {
+                // Done, the cumulative value is the answer we're looking for
+                value
+            },
+            Node::Math(op, lhs, rhs) => {
+                let lhs = &**lhs;
+                let rhs = &**rhs;
+                match (lhs, rhs) {
+                    (other, Node::Number(z)) => match op {
+                        b'+' => other.backtrack_from(value - z),
+                        b'-' => other.backtrack_from(value + z),
+                        b'*' => other.backtrack_from(value / z),
+                        b'/' => other.backtrack_from(value * z),
+                        b'=' => other.backtrack_from(*z),
+                        x => panic!("unknown operator {x}"),
+                    },
+                    (Node::Number(z), other) => match op {
+                        b'+' => other.backtrack_from(value - z),
+                        b'-' => other.backtrack_from(z - value),
+                        b'*' => other.backtrack_from(value / z),
+                        b'/' => other.backtrack_from(z / value),
+                        b'=' => other.backtrack_from(*z),
+                        x => panic!("unknown operator {x}"),
+                    },
+                    _ => {
+                        panic!("Equation was not reduced first");
+                    },
+                }
+            },
+            _ => panic!("Stuck at an irreducible number"),
+        }
+    }
+
+    pub fn build(name: &str, table: &HashMap<&str, Vec<&str>>) -> Self {
+        let spec = &table[name];
+        match spec.len() {
+            1 => {
+                let number = spec[0].parse().unwrap();
+                if name == "humn" {
+                    Self::Human(number)
+                } else {
+                    Self::Number(number)
+                }
+            },
+            3 => {
+                let op = spec[1].as_bytes()[0];
+                let lhs = Self::build(spec[0], &table);
+                let rhs = Self::build(spec[2], &table);
+
+                Self::Math(op, Box::new(lhs), Box::new(rhs))
+            },
+            x => panic!("What kind of spec has {x} tokens?"),
+        }
+    }
+}
+
+pub fn load_monkeys<'a>(input: &[&'a str]) -> HashMap<&'a str, Vec<&'a str>> {
+    input
+        .iter()
+        .map(|line| line.split_once(':').unwrap())
+        .map(|(name, rest)| (name, rest.trim().split_whitespace().collect::<Vec<_>>()))
+        .collect()
 }
 
 #[cfg(test)]
@@ -46,41 +117,27 @@ mod answers {
     use test_case::test_case;
 
     #[test_case(SAMPLE_INPUT => 152; "with example data")]
-    #[test_case(personal_input().as_slice() => 80326079210554; "with personal data")]
+    #[test_case(personal_input().as_slice() => 80326079210554; "with real data")]
     pub fn problem1(input: &[&str]) -> i64 {
-        let (mut shouting, mut thinking) = parse_input(input);
-
-        loop {
-            let ready: Vec<_> = thinking
-                .drain_filter(|_k, v| shouting.contains_key(v.lhs) && shouting.contains_key(v.rhs))
-                .map(|(k, v)| {
-                    let lhs = shouting.get(v.lhs).unwrap();
-                    let rhs = shouting.get(v.rhs).unwrap();
-                    let number = match v.op {
-                        b'+' => lhs + rhs,
-                        b'-' => lhs - rhs,
-                        b'*' => lhs * rhs,
-                        b'/' => lhs / rhs,
-                        _ => 0,
-                    };
-                    (k, number)
-                })
-                .collect();
-
-            shouting.extend(ready);
-
-            if let Some(root_number) = shouting.get("root") {
-                return *root_number;
-            }
-        }
+        let map = load_monkeys(input);
+        let root = Node::build("root", &map);
+        root.eval()
     }
 
     #[test_case(SAMPLE_INPUT => 301; "with example data")]
+    #[test_case(personal_input().as_slice() => 3617613952378; "with real data")]
     pub fn problem2(input: &[&str]) -> i64 {
-        // Parse as before, but adjust root's operation
-        let (mut shouting, mut thinking) = parse_input(input);
-        thinking.get_mut("root").unwrap().op = b'=';
-        0
+        let mut map = load_monkeys(input);
+
+        // Adjust the root node for the new operation
+        let root = map.get_mut("root").unwrap();
+        root[1] = "=";
+
+        // Get the root node, reduce whichever branches we can from the
+        // bottom up, and then solve it from the top down
+        let root = Node::build("root", &map);
+        let root = root.reduce();
+        root.backtrack_from(0)
     }
 
     fn personal_input() -> Vec<&'static str> {
