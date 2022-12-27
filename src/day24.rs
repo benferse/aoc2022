@@ -68,7 +68,7 @@ mod answers {
     }
 
     #[test_case(SAMPLE_INPUT => 54; "with example data")]
-    #[test_case(personal_input().as_slice() => 253; "with real data")]
+    #[test_case(personal_input().as_slice() => 794; "with real data")]
     fn problem2(input: &[&str]) -> i32 {
         let valley = parse_input(input);
         let start = (-1, 0);
