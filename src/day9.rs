@@ -101,7 +101,7 @@ mod answers {
     use super::*;
 
     pub fn parse_instruction(input: &str) -> Instruction {
-        let direction = input.chars().nth(0).unwrap();
+        let direction = input.chars().next().unwrap();
         let count = input.split_ascii_whitespace().nth(1).unwrap().parse().unwrap();
 
         (direction, count)

@@ -90,9 +90,9 @@ pub fn count_overlapping_assignments(lines: &[&str], include_partial: bool) -> u
 #[cfg(test)]
 mod answers {
     use super::*;
-    use std::cell::LazyCell;
+    use std::sync::LazyLock;
 
-    const INPUT: LazyCell<Vec<&str>> = LazyCell::new(|| {
+    static INPUT: LazyLock<Vec<&str>> = LazyLock::new(|| {
         include_str!("./input/day4.txt")
             .lines()
             .map(str::trim)

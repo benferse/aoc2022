@@ -17,21 +17,19 @@ pub fn decrypt(encrypted: &[isize], key: isize, rounds: usize) -> Vec<isize> {
     let len = encrypted.len();
 
     // Create an array of indicies first
-    let mut indices: Vec<_> = (0..len)
-        .into_iter()
-        .collect();
+    let mut indices: Vec<_> = (0..len).collect();
 
     // Use each item in the encrypted text to mix the contents of
     // the index array
     for _ in 0..rounds {
-        for i in 0..len {
+        for (i, item) in encrypted.iter().enumerate() {
             for j in 0..len {
                 if indices[j] == i {
                     indices.remove(j);
                     
                     // indices is temporarily one element shorter than it used to be
                     // so be sure to account for that all over the place :)
-                    let k = (j as isize + encrypted[i] - 1).rem_euclid(len as isize - 1) + 1;
+                    let k = (j as isize + item - 1).rem_euclid(len as isize - 1) + 1;
                     indices.insert(k as usize, i);
                     break;
                 }

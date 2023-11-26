@@ -83,7 +83,7 @@ mod answers {
 
         for (i, line) in grid.iter().enumerate() {
             for (j, k) in line.iter().enumerate() {
-                if *k == 'a' as u8 {
+                if *k == b'a' {
                     candidates.push((j as isize, i as isize));
                 }
             }

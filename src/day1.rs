@@ -28,9 +28,9 @@ pub fn sort_inventories(inventory: &[u32]) -> Vec<u32> {
 #[cfg(test)]
 mod answers {
     use super::*;
-    use std::cell::LazyCell;
+    use std::sync::LazyLock;
 
-    const INPUT: LazyCell<Vec<u32>> = LazyCell::new(|| {
+    static INPUT: LazyLock<Vec<u32>> = LazyLock::new(|| {
         include_str!("./input/day1.txt")
             .lines()
             .map(|line| line.parse().unwrap_or(0))

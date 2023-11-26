@@ -93,8 +93,8 @@ impl Node {
             },
             3 => {
                 let op = spec[1].as_bytes()[0];
-                let lhs = Self::build(spec[0], &table);
-                let rhs = Self::build(spec[2], &table);
+                let lhs = Self::build(spec[0], table);
+                let rhs = Self::build(spec[2], table);
 
                 Self::Math(op, Box::new(lhs), Box::new(rhs))
             },
@@ -107,7 +107,7 @@ pub fn load_monkeys<'a>(input: &[&'a str]) -> HashMap<&'a str, Vec<&'a str>> {
     input
         .iter()
         .map(|line| line.split_once(':').unwrap())
-        .map(|(name, rest)| (name, rest.trim().split_whitespace().collect::<Vec<_>>()))
+        .map(|(name, rest)| (name, rest.split_whitespace().collect::<Vec<_>>()))
         .collect()
 }
 

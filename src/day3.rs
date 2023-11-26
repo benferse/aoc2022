@@ -130,9 +130,9 @@ pub fn prioritize_badges(rucksacks: &[&str]) -> u32
 #[cfg(test)]
 mod answers {
     use super::*;
-    use std::cell::LazyCell;
+    use std::sync::LazyLock;
 
-    const INPUT: LazyCell<Vec<&str>> = LazyCell::new(||
+    static INPUT: LazyLock<Vec<&str>> = LazyLock::new(||
         include_str!("./input/day3.txt")
             .lines()
             .map(str::trim)

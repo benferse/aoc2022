@@ -33,7 +33,7 @@ pub fn diffuse(elves: &mut HashSet<(isize, isize)>, max_rounds: usize) -> usize 
         [(0, 1), (-1, 1), (1, 1)],
     ];
 
-    let all_directions = vec![
+    let all_directions = [
         (-1, -1), (-1, 0), (-1, 1),
         (0, -1),           (0, 1),
         (1, -1), (1, 0),   (1, 1),
@@ -93,8 +93,8 @@ pub fn calculate_empty_space(elves: &HashSet<(isize, isize)>) -> usize {
         bot_right.1 = bot_right.1.max(elf.1);
     }
 
-    let width = (bot_right.0 - top_left.0).abs() as usize + 1;
-    let height = (bot_right.1 - top_left.1).abs() as usize + 1;
+    let width = (bot_right.0 - top_left.0).unsigned_abs() + 1;
+    let height = (bot_right.1 - top_left.1).unsigned_abs() + 1;
 
     (width * height) - elves.len()
 }

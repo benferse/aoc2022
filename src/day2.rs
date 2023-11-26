@@ -137,9 +137,9 @@ pub fn parse_line(line: &str) -> Round {
 #[cfg(test)]
 mod answers {
     use super::*;
-    use std::cell::LazyCell;
+    use std::sync::LazyLock;
 
-    const INPUT: LazyCell<Vec<Round>> = LazyCell::new(|| {
+    static INPUT: LazyLock<Vec<Round>> = LazyLock::new(|| {
         include_str!("./input/day2.txt")
             .lines()
             .map(parse_line)

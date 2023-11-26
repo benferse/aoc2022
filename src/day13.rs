@@ -66,11 +66,11 @@ mod answers {
 
         p.push(first_div);
         p.push(second_div);
-        p.sort_by(|a, b| compare(a, b));
+        p.sort_by(compare);
 
         let mut decoder = 1;
 
-        for idx in 0..p.len() {
+        for (idx, _) in p.iter().enumerate() {
             if p[idx] == json!([[2]]) || p[idx] == json!([[6]]) {
                 decoder *= idx + 1;
             }

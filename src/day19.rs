@@ -1,6 +1,7 @@
 //! Day 19 - Not enough minerals
 
 use rand::prelude::*;
+use std::{str::FromStr, num::ParseIntError};
 
 pub type Robots = [u32; 5];
 pub type Resources = [u32; 5];
@@ -19,18 +20,22 @@ pub struct Blueprint {
     geode_cost: (u32, u32),
 }
 
-impl Blueprint {
-    pub fn from_str(line: &str) -> Self {
+impl FromStr for Blueprint {
+    type Err = ParseIntError;
+
+    fn from_str(line: &str) -> Result<Self, Self::Err> {
         let tokens = line.split_whitespace().collect::<Vec<_>>();
 
-        Self {
-            ore_cost: tokens[6].parse().unwrap(),
-            clay_cost: tokens[12].parse().unwrap(),
-            obsidian_cost: (tokens[18].parse().unwrap(), tokens[21].parse().unwrap()),
-            geode_cost: (tokens[27].parse().unwrap(), tokens[30].parse().unwrap()),
-        }
+        Ok(Self {
+            ore_cost: tokens[6].parse()?,
+            clay_cost: tokens[12].parse()?,
+            obsidian_cost: (tokens[18].parse()?, tokens[21].parse()?),
+            geode_cost: (tokens[27].parse()?, tokens[30].parse()?),
+        })
     }
+}
 
+impl Blueprint {
     pub fn select_next(&self, resources: &mut Resources, rng: &mut ThreadRng, _: u32) -> Option<usize> {
         // figure out what we could build right now, and pick one at random (:
         let mut buildable = vec![NONE];
@@ -168,7 +173,7 @@ mod answers {
     pub fn load_blueprints(input: &[&str]) -> Vec<Blueprint> {
         input
             .iter()
-            .map(|&line| Blueprint::from_str(line))
+            .map(|&line| Blueprint::from_str(line).unwrap())
             .collect()
     }
 

@@ -181,7 +181,7 @@ mod answers {
 
     #[test]
     pub fn problem1() {
-        let (stacks, directions) = parse_input(&INPUT);
+        let (stacks, directions) = parse_input(INPUT);
         let result = execute_instructions_9000(stacks, directions)
             .iter()
             .map(|v| v.back().unwrap())
@@ -193,7 +193,7 @@ mod answers {
 
     #[test]
     pub fn problem2() {
-        let (stacks, directions) = parse_input(&INPUT);
+        let (stacks, directions) = parse_input(INPUT);
         let result = execute_instructions_9001(stacks, directions)
             .iter()
             .map(|v| v.back().unwrap())

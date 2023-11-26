@@ -164,14 +164,14 @@ mod answers {
     #[test_case(sample_input() => 64; "with example data")]
     #[test_case(personal_input() => 4370; "with real data")]
     pub fn problem1(input: Droplet) -> usize {
-        let droplet = BTreeSet::from_iter(input.into_iter());
+        let droplet = BTreeSet::from_iter(input);
         total_free_faces(&droplet)
     }
 
     #[test_case(sample_input() => 58; "with example data")]
     #[test_case(personal_input() => 2458; "with real data")]
     pub fn problem2(input: Droplet) -> usize {
-        let droplet = BTreeSet::from_iter(input.into_iter());
+        let droplet = BTreeSet::from_iter(input);
         total_free_faces(&droplet) - total_trapped_faces(&droplet)
     }
 

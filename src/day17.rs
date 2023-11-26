@@ -134,7 +134,7 @@ mod answers {
 
         while n < num_rocks {
             let rock_index = n % 5;
-            drop_rock(&mut pile, &wind, &mut wind_index, rock_index);
+            drop_rock(&mut pile, wind, &mut wind_index, rock_index);
             n += 1;
 
             // Use the top 8 layers to look for cycles (the "summit" of the pile)

@@ -1,11 +1,11 @@
 //! Advent of Code 2022
 
+#![feature(anonymous_lifetime_in_impl_trait)]
 #![feature(exact_size_is_empty)]
+#![feature(hash_extract_if)]
 #![feature(iter_collect_into)]
 #![feature(iter_next_chunk)]
-#![feature(once_cell)]
-#![feature(anonymous_lifetime_in_impl_trait)]
-#![feature(hash_drain_filter)]
+#![feature(lazy_cell)]
 
 #![allow(clippy::unusual_byte_groupings)]
 
